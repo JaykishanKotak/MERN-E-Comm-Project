@@ -25,7 +25,7 @@ const reducer = combineReducers({
 
 //To Store the data of local/session storage in redux
 //Get user data from local storage
-const userInfoLocalStorage = localStorage.getItem("userInfo")
+const userInfoInLocalStorage = localStorage.getItem("userInfo")
   ? JSON.parse(localStorage.getItem("userInfo"))
   : sessionStorage.getItem("userInfo")
   ? JSON.parse(sessionStorage.getItem("userInfo"))
@@ -36,9 +36,7 @@ const INITIAL_STATE = {
   cart: {
     value: 0,
   },
-  userRegisterLogin: {
-    userInfo: { userInfoLocalStorage },
-  },
+  userRegisterLogin: { userInfo: userInfoInLocalStorage },
 };
 
 //Apply thunk middleware

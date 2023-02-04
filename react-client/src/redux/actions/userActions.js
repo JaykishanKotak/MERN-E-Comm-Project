@@ -8,7 +8,6 @@ export const setReduxUserState = (userCreated) => (dispatch) => {
     payload: userCreated,
   });
 };
-
 export const logout = (dispatch) => {
   //Redirect to login page
   document.location.href = "/login";

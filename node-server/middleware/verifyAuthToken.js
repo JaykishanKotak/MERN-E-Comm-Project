@@ -1,9 +1,6 @@
 const jwt = require("jsonwebtoken");
 
 const verifyIsLoggedIn = (req, res, next) => {
-  //next();
-  //return;
-  //to do : remove later
   try {
     //Go to next middleware
     //next();
@@ -11,13 +8,13 @@ const verifyIsLoggedIn = (req, res, next) => {
     const token = req.cookies.access_token;
     //console.log("cookie", token);
     if (!token) {
-      return res.status(403).send("A token is required for the authentication");
+      return res.status(403).send("A token is required for authentication");
     }
     try {
-      const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      req.user = decode;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      req.user = decoded;
       next();
-    } catch (error) {
+    } catch (err) {
       return res.status(401).send("Unauthorized. Invalid Token");
     }
   } catch (error) {
@@ -25,18 +22,12 @@ const verifyIsLoggedIn = (req, res, next) => {
   }
 };
 
-const verifyIsAdmin = async (req, res, next) => {
-  //next();
-  //return;
-  //to do : remove later
-  try {
-    if (req.user && req.user.isAdmin) {
-      next();
-    } else {
-      return res.status(401).send("Unauthorized, Admin Required.");
-    }
-  } catch (error) {
-    next(error);
+const verifyIsAdmin = (req, res, next) => {
+  if (req.user && req.user.isAdmin) {
+    next();
+  } else {
+    return res.status(401).send("Unauthorized. Admin required");
   }
 };
+
 module.exports = { verifyIsLoggedIn, verifyIsAdmin };
