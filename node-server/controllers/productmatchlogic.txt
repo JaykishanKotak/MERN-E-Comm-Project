@@ -1,0 +1,22 @@
+let a = 'RAM-1TB-2TB-4TB,color-red-blue';
+console.log(a.split(","))
+
+a.split(",").reduce((acc,item) => {
+    if(item) {
+        let b = item.split("-");
+        console.log(b);
+        let values = [...b];
+        console.log(values);
+        values.shift();
+        console.log(values);
+        let b1 = {
+            attrs : {$elemMatch : {
+                ket : a[0],
+                value : {$in : values}
+            }}
+        }
+        console.log(b1);
+        acc.push(b1);
+        return acc
+    } else return acc
+}, [])

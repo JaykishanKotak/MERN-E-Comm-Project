@@ -1,0 +1,75 @@
+A couple of tips on how to use MongoDB database relationships
+
+
+Depending on some criteria we should use either embedded documents or reference by id in relationships. "Embedded" means that we store all of the data in one object (one model definition), for example a blog post may have some images and we store images path inside "images" property of blog object. But "reference by id" means that we store all of the data in two objects (two model definitions), for example a blog post has many comments and we store comments in separate document (comments collection, in posts collection we store id references to comments).
+
+
+
+The criteria are:  relationships that exists between collections (how many related model we have - few, many, a lot), data access patterns (how many read and write operations on particular relation), data cohesion (whether we query on related model alone or only main model)
+
+See below examples to better understand the criteria
+
+
+
+
+
+One-to-Many
+
+types:
+
+One-to-Few: only embed document, example:
+
+const Tutorial = mongoose.model(
+  "Tutorial",
+  new mongoose.Schema({
+    title: String,
+    author: String,
+    images: [] // embedded images into array, because there are only few images - not many
+  })
+);
+
+
+One-to-Many: use reference if there are  many write operations, for example comments on video post.
+
+
+
+One-to-aLot: only reference by id, example:
+
+const Category = mongoose.model(
+  "Category",
+  new mongoose.Schema({
+    name: String,
+    description: String
+  })
+);
+ 
+const Product = mongoose.model(
+  "Product",
+  new mongoose.Schema({
+    title: String,
+    description: String,
+    images: [],
+    category: {
+      type: mongoose.Schema.Types.ObjectId, // here we are referencing by id
+      ref: "Category"
+    }
+  })
+);
+
+
+
+
+
+
+  One-to-One
+
+    use only embedded documents, example: a user has one address
+
+
+
+
+
+  Many-to-Many
+
+   use only reference by id, example: blog posts has many tags, but a tag may belong to many blog posts
+

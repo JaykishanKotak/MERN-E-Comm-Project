@@ -1,0 +1,3 @@
+Seeder is a form of dummy data used to add data in db and check the results inside mongo db
+
+Data can be genrated from multiple websites . ex : Mockaroo.com

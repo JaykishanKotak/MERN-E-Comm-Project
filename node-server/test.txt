@@ -1,0 +1,79 @@
+const express = require("express");
+const app = express();
+const apiRoutes = require("./routes/apiRoutes");
+const port = 5000;
+
+//User Ctrl+Shift+P and type Quokka
+//Middleware
+//app.use((req, res, next) => {
+//console.log("First Middleware");
+//next();
+//});
+app.get("/", (req, res, next) => {
+  //console.log("Second Middleware");
+  console.log("Synchoornous code");
+  throw new Error("Some Error Occured");
+  res.json({ message: "API Running" });
+  //next();
+});
+
+app.get("/a", (req, res, next) => {
+  //console.log("Second Middleware");
+  setTimeout(() => {
+    //console.log("ASynchoornous code");
+    //throw new Error("Some Error Occured");
+    //Express Doent handle error in async code
+    //use next in async code to handle error
+    //next(new Error("Some Error Occured"));
+    try {
+      sadasconsole.log("ASynchoornous code");
+    } catch (error) {
+      next(error);
+    }
+  }, 1000);
+  res.send("page a");
+  //next();
+});
+app.use("/api", apiRoutes);
+//Here we using our own middleware to handle error instade of express middleware
+app.use((error, req, res, next) => {
+  //console.log(error);
+  //next(error);
+  //show error in webbrowser
+  res.status(500).json({
+    message: error.message,
+    stack: error.stack,
+  });
+});
+//app.get("/api/product", (req, res, next) => {
+//console.log("Second Middleware");
+//res.send("Product Route");
+//next();
+//});
+//app.use((req, res, next) => {
+//console.log("Fourth Middleware");
+//next();
+//});
+//app.get("/two", (req, res) => {
+//console.log("Thired Middleware");
+//res.send("Hello World Two!");
+//});
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
+
+//Add new product
+  const Product = require("./models/ProductModel");
+  try {
+    const product = new Psroduct();
+    product.productName = "Test Product";
+    const productSaved = await product.save();
+    console.log(productSaved == product);
+    const products = await Product.find();
+    console.log("Products =>", products);
+    res.status(200).send("Product Creacted", product._id);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
