@@ -1,19 +1,21 @@
 import React from "react";
 import axios from "axios";
 import ProductsPageComponent from "./components/ProductsPageComponent";
-const AdminProductsPage = () => {
-  const fetchProducts = async (abctrl) => {
-    const { data } = await axios.get("/api/products/admin", {
-      signal: abctrl.signal,
-    });
-    console.log(data.orders);
-    return data.orders;
-  };
 
-  const deleteProduct = async (productId) => {
-    const { data } = await axios.delete(`/api/products/admin/${productId}`);
-    return data;
-  };
+const fetchProducts = async (abctrl) => {
+  const { data } = await axios.get("/api/products/admin", {
+    signal: abctrl.signal,
+  });
+  console.log(data.orders);
+  return data.orders;
+};
+
+const deleteProduct = async (productId) => {
+  const { data } = await axios.delete(`/api/products/admin/${productId}`);
+  return data;
+};
+
+const AdminProductsPage = () => {
   //fetchProducts();
   return (
     <>
