@@ -1,102 +1,128 @@
 import React from "react";
-import {
-  Alert,
-  Button,
-  Col,
-  Container,
-  Form,
-  ListGroup,
-  Row,
-} from "react-bootstrap";
-import CartItemComponent from "../../components/CartItemComponent";
+import UserOrderDetailsPageComponent from "./components/UserOrderDetailsPageComponent";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { loadScript } from "@paypal/paypal-js";
 
+//Get order details
+const getOrder = async (orderId) => {
+  const { data } = await axios.get("/api/orders/user/" + orderId);
+  return data;
+};
+
+const loadPaypalScripts = (
+  cartSubtotal,
+  cartItems,
+  orderId,
+  updateStateAfterOrder
+) => {
+  loadScript({ "client-id": "test id " })
+    .then((paypal) => {
+      //Dynamically Load Paypal Buttons
+      paypal
+        // .Buttons({
+        //   //createOrder: createPayPalOrderHandler,
+        //   //onCancel: onCancelHandler,
+        //   //onApprove: onApproveHandler,
+        //   //onError: onErrorHandler,
+        // })
+        .Buttons(buttons(cartSubtotal, cartItems))
+        .render("#paypal-container-element");
+      console.log(paypal);
+    })
+    .catch((err) => {
+      console.log("Failed to load Paypal JS SDK Scripts", err);
+    });
+};
+
+const buttons = (cartSubtotal, cartItems, orderId, updateStateAfterOrder) => {
+  return {
+    createOrder: function (data, actions) {
+      return actions.order.create({
+        purchase_units: [
+          {
+            amount: {
+              value: cartSubtotal,
+              breakdown: {
+                item_total: {
+                  currency_code: "USD",
+                  value: cartSubtotal,
+                },
+              },
+            },
+            items: cartItems.map((product) => {
+              return {
+                name: product.name,
+                unit_amount: {
+                  currency_code: "USD",
+                  value: product.price,
+                },
+                quantity: product.quantity,
+              };
+            }),
+          },
+        ],
+      });
+    },
+    onCancel: onCancelHandler,
+    //Called when paypal finishes payment process
+    onApprove: function (data, actions) {
+      return actions.order.capture().then(function (orderData) {
+        var transaction = orderData.purchase_units[0].payments.captures[0];
+        if (
+          transaction.status === "COMPLETED" &&
+          Number(transaction.amount.value) === Number(cartSubtotal)
+        ) {
+          //console.log("update order in database");
+          updateOrder(orderId)
+            .then((data) => {
+              if (data.isPaid) {
+                updateStateAfterOrder(data.paidAt);
+              }
+            })
+            .catch((er) => console.log(er));
+        }
+      });
+    },
+    onError: onErrorHandler,
+  };
+};
+// const createPayPalOrderHandler = function () {
+//   console.log("createPayPalOrderHandler");
+// };
+
+const onCancelHandler = function () {
+  console.log("cancel");
+};
+
+// const onApproveHandler = function () {
+//   console.log("onApproveHandler");
+// };
+
+const onErrorHandler = function (err) {
+  console.log("error");
+};
+
+//Upadte oderd after payment
+const updateOrder = async (orderId) => {
+  const { data } = await axios.put("/api/orders/paid/" + orderId);
+  return data;
+};
 const UserOrderDetailsPage = () => {
+  const userInfo = useSelector((state) => state.userRegisterLogin.userInfo);
+
+  const getUser = async () => {
+    const { data } = await axios.get("/api/users/profile/" + userInfo._id);
+    return data;
+  };
   return (
-    <>
-      <Container fluid>
-        <Row className="mt-4">
-          <h1>Order Details</h1>
-          <Col md={8}>
-            <br />
-            <Row>
-              <Col md={6}>
-                <h2>Shipping</h2>
-                <b>Name</b>: John Doe
-                <br />
-                <b>Address</b> 1000 S Westgate Ave Los Angeles, California(CA),
-                90049
-                <br />
-                <b>Phone</b>: (310) 207-1320
-                <br />
-              </Col>
-              <Col md={6}>
-                <h2>Payment Method</h2>
-                <Form.Select disabled={false}>
-                  <option value="pp">PayPal</option>
-                  <option value="cod">
-                    Cash On Delivery (Delivery May be delayed)
-                  </option>
-                </Form.Select>
-              </Col>
-              <Row>
-                <Col>
-                  <Alert className="mt-3" variant="danger">
-                    Not Delivered
-                  </Alert>
-                </Col>
-                <Col>
-                  <Alert className="mt-3" variant="success">
-                    Paid on 2023-01-01
-                  </Alert>
-                </Col>
-              </Row>
-            </Row>
-            <br />
-            <h2>Order Items</h2>
-            <ListGroup variant="flush">
-              {Array.from({ length: 3 }).map((item, idx) => (
-                <CartItemComponent
-                  item={{
-                    image: { path: "/images/tablets-category.png" },
-                    name: "Product name",
-                    price: 10,
-                    count: 10,
-                    quantity: 10,
-                  }}
-                  key={idx}
-                />
-              ))}
-            </ListGroup>
-          </Col>
-          <Col md={4}>
-            <ListGroup>
-              <ListGroup.Item>
-                <h3>Order Summery</h3>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                Items Price (include tax): <span className="fw-bold">$123</span>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                Shipping: <span className="fw-bold">Included</span>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                Tax: <span className="fw-bold">Included</span>
-              </ListGroup.Item>
-              <ListGroup.Item className="text-danger">
-                Total Price: <span className="fw-bold">$123</span>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <div className="d-grid gap-2">
-                  <Button size="lg" variant="danger" type="button">
-                    Pay for the order
-                  </Button>
-                </div>
-              </ListGroup.Item>
-            </ListGroup>
-          </Col>
-        </Row>
-      </Container>
-    </>
+    <UserOrderDetailsPageComponent
+      userInfo={userInfo}
+      getUser={getUser}
+      getOrder={getOrder}
+      //loadScript={loadScript}
+      loadPaypalScripts={loadPaypalScripts}
+    />
   );
 };
 

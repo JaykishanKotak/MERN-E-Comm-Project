@@ -10,7 +10,7 @@ import RegisterPage from "./pages/RegisterPage";
 import UserProfilePage from "./pages/user/UserProfilePage";
 import UserOrdersPage from "./pages/user/UserOrdersPage";
 import UserOrderDetailsPage from "./pages/user/UserOrderDetailsPage";
-import UserCardDetailsPage from "./pages/user/UserCardDetailsPage";
+import UserCartDetailsPage from "./pages/user/UserCartDetailsPage";
 
 //Admin Pages
 import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
@@ -46,7 +46,7 @@ function App() {
             {/* Publicly Avaialble Pages*/}
             <Route path="/" element={<HomePage />} />
             <Route path="/product-list" element={<ProductListPage />} />
-            <Route path="/product-details" element={<ProductDetailsPage />} />
+            {/* <Route path="/product-details" element={<ProductDetailsPage />} />*/}
             <Route
               path="/product-details/:id"
               element={<ProductDetailsPage />}
@@ -65,10 +65,10 @@ function App() {
             <Route path="/user/my-orders" element={<UserOrdersPage />} />
             <Route
               path="/user/cart-details"
-              element={<UserCardDetailsPage />}
+              element={<UserCartDetailsPage />}
             />
             <Route
-              path="/user/order-details"
+              path="/user/order-details/:id"
               element={<UserOrderDetailsPage />}
             />
           </Route>

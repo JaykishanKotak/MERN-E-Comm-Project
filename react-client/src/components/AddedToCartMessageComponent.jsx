@@ -1,13 +1,24 @@
 import React, { useState } from "react";
 import { Alert, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
-const AddedToCartMessageComponent = () => {
+import { Link, useNavigate } from "react-router-dom";
+
+const AddedToCartMessageComponent = ({
+  setShowCartMessage,
+  showCartMessage,
+}) => {
   const [show, setShow] = useState(true);
+  const navigate = useNavigate();
+  const goBack = () => {
+    //-1 means last page visited on browser before this component
+    navigate(-1);
+  };
   return (
     <Alert
-      show={show}
+      //show={show}
+      show={showCartMessage}
       variant="success"
-      onClose={() => setShow(false)}
+      //onClose={() => setShow(false)}
+      onClose={() => setShowCartMessage(false)}
       dismissible
     >
       <Alert.Heading>The product was added to your cart !</Alert.Heading>
@@ -16,7 +27,10 @@ const AddedToCartMessageComponent = () => {
           <Button variant="success">Go To Cart</Button>
         </Link>
         {"  "}
-        <Button variant="danger"> Go Back</Button>
+        <Button variant="danger" onClick={goBack}>
+          {" "}
+          Go Back
+        </Button>
       </p>
     </Alert>
   );

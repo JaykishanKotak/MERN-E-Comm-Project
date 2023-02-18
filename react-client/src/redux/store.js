@@ -1,6 +1,8 @@
 import { combineReducers, createStore, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
+import { cartReducer } from "./reducers/cartReducers";
 import { counterReducer } from "./reducers/cartReducers";
+
 import thunk from "redux-thunk";
 import { userRegisterLoginReducer } from "./reducers/userReducers";
 //Create a reducer which is used to changeing the state
@@ -19,10 +21,15 @@ import { userRegisterLoginReducer } from "./reducers/userReducers";
 //composeWithDevTools for dev tools extenstion
 //const store = createStore(countReducer, { value: 0 }, composeWithDevTools());
 const reducer = combineReducers({
-  cart: counterReducer,
+  //cart: counterReducer,
+  cart: cartReducer,
   userRegisterLogin: userRegisterLoginReducer,
 });
 
+//Get The cart item from local storage
+const cartItemInLoaclStorage = localStorage.getItem("cart")
+  ? JSON.parse(localStorage.getItem("cart"))
+  : [];
 //To Store the data of local/session storage in redux
 //Get user data from local storage
 const userInfoInLocalStorage = localStorage.getItem("userInfo")
@@ -33,8 +40,27 @@ const userInfoInLocalStorage = localStorage.getItem("userInfo")
 //pass value in inital state
 //Creating initial state to store data in Localstorage
 const INITIAL_STATE = {
+  //init state for cart reducer
   cart: {
-    value: 0,
+    //value: 0,
+    //cartItem: [],
+    cartItem: cartItemInLoaclStorage,
+    //itemCount: 0,
+
+    //it will sum up all the quantities of shopping cart
+    itemCount: cartItemInLoaclStorage
+      ? cartItemInLoaclStorage.reduce(
+          (quantity, item) => Number(item.quantity) + quantity,
+          0
+        )
+      : 0,
+    //cartSubtotal: 0,
+    cartSubtotal: cartItemInLoaclStorage
+      ? cartItemInLoaclStorage.reduce(
+          (price, item) => (price + item.price) * item.quantity,
+          0
+        )
+      : 0,
   },
   userRegisterLogin: { userInfo: userInfoInLocalStorage },
 };

@@ -19,7 +19,12 @@ import { useDispatch, useSelector } from "react-redux";
 const HeaderComponent = () => {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.userRegisterLogin);
-  console.log("data", userInfo);
+  //const { itemCount } = useSelector((state) => state.cart.itemCount);
+  //const cart = useSelector((state) => state.cart);
+  //console.log("item count", cart.itemCount);
+  //const itemCounter = Number(cart.itemCount) || 0;
+  const itemCount = useSelector((state) => state.cart.itemCount);
+  //console.log("data", userInfo);
   return (
     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
       <Container>
@@ -79,10 +84,10 @@ const HeaderComponent = () => {
               </>
             )}
 
-            <LinkContainer to="/cart">
+            <LinkContainer to="/cart-page">
               <Nav.Link>
                 <Badge pill bg="danger">
-                  2
+                  {itemCount === 0 ? "" : itemCount}
                 </Badge>
                 <i className="bi bi-cart-dash"></i>
                 <span className="ms-1">CART</span>

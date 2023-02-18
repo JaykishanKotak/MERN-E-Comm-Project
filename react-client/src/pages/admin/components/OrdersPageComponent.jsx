@@ -13,10 +13,13 @@ const OrdersPageComponent = ({ getOrders }) => {
     getOrders(abctrl)
       .then((orders) => setOrders(orders))
       .catch(
-        (er) => dispatch(logout())
-        //console.log(
-        //er.response.data.message ? er.response.data.message : er.response.data
-        //)
+        //(er) => dispatch(logout())
+        (er) =>
+          console.log(
+            er.response.data.message
+              ? er.response.data.message
+              : er.response.data
+          )
         //console.log(er)
       );
     return () => abctrl.abort;
