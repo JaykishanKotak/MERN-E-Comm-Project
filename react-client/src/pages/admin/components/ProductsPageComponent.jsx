@@ -23,15 +23,16 @@ const ProductsPageComponent = ({ fetchProducts, deleteProduct }) => {
     const abctrl = new AbortController();
     fetchProducts(abctrl)
       .then((res) => setProducts(res))
-      .catch((er) =>
-        //setProducts([
-        //{
-        //name: er.response.data.message
-        //? er.response.data.message
-        //: er.response.data,
-        //},
-        //])
-        dispatch(logout())
+      .catch(
+        (er) =>
+          setProducts([
+            {
+              name: er.response.data.message
+                ? er.response.data.message
+                : er.response.data,
+            },
+          ])
+        // dispatch(logout())
       );
     return () => abctrl.abort;
   }, [productDeleted]);

@@ -2,7 +2,7 @@ import { combineReducers, createStore, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { cartReducer } from "./reducers/cartReducers";
 import { counterReducer } from "./reducers/cartReducers";
-
+import { getCategoriesReducer } from "./reducers/categoryReducers";
 import thunk from "redux-thunk";
 import { userRegisterLoginReducer } from "./reducers/userReducers";
 //Create a reducer which is used to changeing the state
@@ -24,6 +24,7 @@ const reducer = combineReducers({
   //cart: counterReducer,
   cart: cartReducer,
   userRegisterLogin: userRegisterLoginReducer,
+  getCategories: getCategoriesReducer,
 });
 
 //Get The cart item from local storage

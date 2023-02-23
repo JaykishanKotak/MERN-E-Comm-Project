@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Row, Col, Container, Alert, ListGroup, Button } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import CartItemComponent from "../../components/CartItemComponent";
@@ -39,7 +39,7 @@ export const CartPageComponent = ({
           ) : (
             <ListGroup variant="flush" className="mt-4">
               {cartItem.map((item, idx) => (
-                <>
+                <Fragment key={idx}>
                   <CartItemComponent
                     // item={{
                     //   image: { path: "/images/tablets-category.png" },
@@ -54,7 +54,7 @@ export const CartPageComponent = ({
                     removeFromCartHandler={removeFromCartHandler}
                   />
                   <br />
-                </>
+                </Fragment>
               ))}
             </ListGroup>
           )}

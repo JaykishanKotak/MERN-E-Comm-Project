@@ -295,7 +295,7 @@ const adminUpload = async (req, res, next) => {
       //console.log("3", uuidv4());
       var fileName = uuidv4() + path.extname(image.name);
       var uploadPath = uploadDirectory + "/" + fileName;
-      product.images.push({ path: "/images/products" + fileName });
+      product.images.push({ path: "/images/products/" + fileName });
       //move file to directory
       image.mv(uploadPath, function (error) {
         if (error) {

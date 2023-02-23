@@ -20,6 +20,7 @@ const AddedToCartMessageComponent = ({
       //onClose={() => setShow(false)}
       onClose={() => setShowCartMessage(false)}
       dismissible
+      className="mt-5"
     >
       <Alert.Heading>The product was added to your cart !</Alert.Heading>
       <p>

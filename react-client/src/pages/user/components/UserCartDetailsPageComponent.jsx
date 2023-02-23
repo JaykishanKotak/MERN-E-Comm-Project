@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import {
   Alert,
   Button,
@@ -159,19 +159,21 @@ const UserCartDetailsPageComponent = ({
           <h2>Order Items</h2>
           <ListGroup variant="flush">
             {cartItem.map((item, idx) => (
-              <CartItemComponent
-                // item={{
-                //   image: { path: "/images/tablets-category.png" },
-                //   name: "Product name",
-                //   price: 10,
-                //   count: 10,
-                //   quantity: 10,
-                // }}
-                item={item}
-                key={idx}
-                removeFromCartHandler={removeFromCartHandler}
-                changeCount={changeCount}
-              />
+              <Fragment key={idx}>
+                <CartItemComponent
+                  // item={{
+                  //   image: { path: "/images/tablets-category.png" },
+                  //   name: "Product name",
+                  //   price: 10,
+                  //   count: 10,
+                  //   quantity: 10,
+                  // }}
+                  item={item}
+                  key={idx}
+                  removeFromCartHandler={removeFromCartHandler}
+                  changeCount={changeCount}
+                />
+              </Fragment>
             ))}
           </ListGroup>
         </Col>

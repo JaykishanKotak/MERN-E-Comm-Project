@@ -15,6 +15,8 @@ import { LinkContainer } from "react-router-bootstrap";
 import { Link } from "react-router-dom";
 import { logout } from "../redux/actions/userActions";
 import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { getCategories } from "../redux/actions/categoryActions";
 
 const HeaderComponent = () => {
   const dispatch = useDispatch();
@@ -25,6 +27,11 @@ const HeaderComponent = () => {
   //const itemCounter = Number(cart.itemCount) || 0;
   const itemCount = useSelector((state) => state.cart.itemCount);
   //console.log("data", userInfo);
+
+  //Call category action here
+  useEffect(() => {
+    dispatch(getCategories());
+  }, [dispatch]);
   return (
     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
       <Container>

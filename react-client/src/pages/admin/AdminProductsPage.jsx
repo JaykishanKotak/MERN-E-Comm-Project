@@ -6,8 +6,8 @@ const fetchProducts = async (abctrl) => {
   const { data } = await axios.get("/api/products/admin", {
     signal: abctrl.signal,
   });
-  console.log(data.orders);
-  return data.orders;
+  console.log("Products", data);
+  return data;
 };
 
 const deleteProduct = async (productId) => {

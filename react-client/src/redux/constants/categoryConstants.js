@@ -1,0 +1,2 @@
+export const GET_CATEGORY_REQUEST = "GET_CATEGORY_REQUEST";
+export const SAVE_ATTR = "SAVE_ATTR";
