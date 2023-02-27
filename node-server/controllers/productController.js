@@ -261,6 +261,19 @@ const adminUpdateProducts = async (req, res, next) => {
 };
 
 const adminUpload = async (req, res, next) => {
+  if (req.query.cloudinary === "true") {
+    //Upadate the db
+    try {
+      let product = await Product.findById(req.query.productId).orFail();
+      //Pass cloudinary path in the database
+      product.images.push({ path: req.body.url });
+      await product.save();
+    } catch (err) {
+      next(err);
+    }
+    //So rest of code will not exicuted
+    return;
+  }
   try {
     if (!req.files || !!req.files.images == false) {
       return res.status(400).send("No Files Found!!!");
@@ -310,9 +323,30 @@ const adminUpload = async (req, res, next) => {
   }
 };
 const adminDeleteProductImage = async (req, res, next) => {
+  //For cloudinary
+  const imagePath = decodeURIComponent(req.params.imagePath);
+  if (req.query.cloudinary === "true") {
+    try {
+      await Product.findOneAndUpdate(
+        { _id: req.params.productId },
+        {
+          $pull: {
+            images: {
+              path: imagePath,
+            },
+          },
+        }
+      );
+      return res.end();
+    } catch (error) {
+      next(error);
+    }
+    //So rest of code will not exicuted
+    return;
+  }
   try {
     //catch and decode the path
-    const imagePath = decodeURIComponent(req.params.imagePath);
+    //const imagePath = decodeURIComponent(req.params.imagePath);
     //ex to encode the path :-
     //console.log(encodeURIComponent('/images/productsad1cbd69-c2c7-4192-8e85-19a737d4a785.jpg'));
 

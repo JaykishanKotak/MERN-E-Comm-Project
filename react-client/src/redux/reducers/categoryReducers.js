@@ -13,6 +13,19 @@ export const getCategoriesReducer = (state = { categories: [] }, action) => {
         ...state,
         categories: action.payload,
       };
+    //Create New Category
+    case actionTypes.INSERT_CATEGORY:
+      return {
+        ...state,
+        categories: action.payload,
+      };
+    //Delete a Category
+    case actionTypes.DELETE_CATEGORY:
+      return {
+        ...state,
+        //Overwtire old state with updated categories data
+        categories: action.payload,
+      };
     //If not matching action found
     default:
       return state;

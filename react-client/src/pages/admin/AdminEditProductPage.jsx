@@ -4,7 +4,10 @@ import { useSelector } from "react-redux";
 import EditProductPageComponent from "./components/EditProductPageComponent";
 import { useDispatch } from "react-redux";
 import { saveAttrToCategoryDocument } from "../../redux/actions/categoryActions";
-
+import {
+  uploadImageApiRequest,
+  uploadImagesCloudinaryApiRequest,
+} from "./utils/utils";
 //Get product details
 const fetchProduct = async (productId) => {
   const { data } = await axios.get(`/api/products/get-one/${productId}`);
@@ -22,18 +25,18 @@ const updateProductApiRequest = async (productId, formInputs) => {
 };
 
 //For single/multiple imahe uploads
-const uploadHandler = async (images, productId) => {
-  //Built in class to handle form datas
-  const formData = new FormData();
+// const uploadHandler = async (images, productId) => {
+//   //Built in class to handle form datas
+//   const formData = new FormData();
 
-  Array.from(images).forEach((image) => {
-    formData.append("images", image);
-  });
-  await axios.post(
-    "/api/products/admin/upload?productId=" + productId,
-    formData
-  );
-};
+//   Array.from(images).forEach((image) => {
+//     formData.append("images", image);
+//   });
+//   await axios.post(
+//     "/api/products/admin/upload?productId=" + productId,
+//     formData
+//   );
+// };
 const AdminEditProductPage = () => {
   //Read category data from redux state
   const { categories } = useSelector((state) => state.getCategories);
@@ -46,7 +49,17 @@ const AdminEditProductPage = () => {
     console.log("Before", imagePath);
     let encoded = encodeURIComponent(imagePath);
     console.log("After", encoded);
-    await axios.delete(`/api/products/admin/image/${encoded}/${productId}`);
+    if (process.env.NODE_ENV !== "production") {
+      console.log("production");
+      // TO DO : change to !==
+      await axios.delete(`/api/products/admin/image/${encoded}/${productId}`);
+    } else {
+      console.log("Cloud");
+      //For req of cloudinary service
+      await axios.delete(
+        `/api/products/admin/image/${encoded}/${productId}?cloudinary=true`
+      );
+    }
   };
   return (
     <EditProductPageComponent
@@ -56,7 +69,9 @@ const AdminEditProductPage = () => {
       reduxDispatch={reduxDispatch}
       saveAttrToCategoryDocument={saveAttrToCategoryDocument}
       imageDeleteHandler={imageDeleteHandler}
-      uploadHandler={uploadHandler}
+      //uploadHandler={uploadHandler}
+      uploadImagesCloudinaryApiRequest={uploadImagesCloudinaryApiRequest}
+      uploadImageApiRequest={uploadImageApiRequest}
     />
   );
 };

@@ -12,6 +12,11 @@ import {
 } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import {
+  changeCategory,
+  setValuesForAttrFromDbSelectForm,
+  setAttributesTableWrapper,
+} from "./utils/utils";
 const onHover = {
   cursor: "pointer",
   position: "absolute",
@@ -26,7 +31,9 @@ const EditProductPageComponent = ({
   reduxDispatch,
   saveAttrToCategoryDocument,
   imageDeleteHandler,
-  uploadHandler,
+  //uploadHandler,
+  uploadImageApiRequest,
+  uploadImagesCloudinaryApiRequest,
 }) => {
   const [validated, setValidated] = useState(false);
   const [product, setProduct] = useState({});
@@ -59,29 +66,29 @@ const EditProductPageComponent = ({
   //Ref key and value attributes
   const createNewAttrKey = useRef(null);
   const createNewAttrValue = useRef(null);
-  const setValuesForAttrFromDbSelectForm = (e) => {
-    //console.log(e.target.value);
-    if (e.target.value !== "Choose attribute") {
-      //console.log(attrVal.current);
-      var selectedAttr = attributesFromDb.find(
-        (item) => item.key === e.target.value
-      );
-      let valuesForAttrKey = attrVal.current;
-      console.log(selectedAttr);
-      if (selectedAttr && selectedAttr.value.length > 0) {
-        while (valuesForAttrKey.options.length) {
-          //Remove prriously stored values
-          valuesForAttrKey.remove(0);
-        }
-        // Add new attrs value
-        valuesForAttrKey.options.add(new Option("Choose attribute value"));
-        selectedAttr.value.map((item) => {
-          valuesForAttrKey.add(new Option(item));
-          return "";
-        });
-      }
-    }
-  };
+  // const setValuesForAttrFromDbSelectForm = (e) => {
+  //   //console.log(e.target.value);
+  //   if (e.target.value !== "Choose attribute") {
+  //     //console.log(attrVal.current);
+  //     var selectedAttr = attributesFromDb.find(
+  //       (item) => item.key === e.target.value
+  //     );
+  //     let valuesForAttrKey = attrVal.current;
+  //     console.log(selectedAttr);
+  //     if (selectedAttr && selectedAttr.value.length > 0) {
+  //       while (valuesForAttrKey.options.length) {
+  //         //Remove prriously stored values
+  //         valuesForAttrKey.remove(0);
+  //       }
+  //       // Add new attrs value
+  //       valuesForAttrKey.options.add(new Option("Choose attribute value"));
+  //       selectedAttr.value.map((item) => {
+  //         valuesForAttrKey.add(new Option(item));
+  //         return "";
+  //       });
+  //     }
+  //   }
+  // };
   //Get product detail
   useEffect(() => {
     fetchProduct(id)
@@ -152,20 +159,20 @@ const EditProductPageComponent = ({
     setCategoryChoosen(product.category);
   }, [product]);
 
-  //Change Category Function
-  const changeCategory = (e) => {
-    const highLevelCategory = e.target.value.split("/")[0];
-    const highLevelCategoryAllData = categories.find(
-      (cat) => cat.name === highLevelCategory
-    );
-    if (highLevelCategoryAllData && highLevelCategoryAllData.attrs) {
-      //Set new attrs data for category change
-      setAttributesFromDb(highLevelCategoryAllData.attrs);
-    } else {
-      setAttributesFromDb([]);
-    }
-    setCategoryChoosen(e.target.value);
-  };
+  // Change Category Function
+  // const changeCategory = (e) => {
+  //   const highLevelCategory = e.target.value.split("/")[0];
+  //   const highLevelCategoryAllData = categories.find(
+  //     (cat) => cat.name === highLevelCategory
+  //   );
+  //   if (highLevelCategoryAllData && highLevelCategoryAllData.attrs) {
+  //     //Set new attrs data for category change
+  //     setAttributesFromDb(highLevelCategoryAllData.attrs);
+  //   } else {
+  //     setAttributesFromDb([]);
+  //   }
+  //   setCategoryChoosen(e.target.value);
+  // };
 
   //To update dymanic attrs value
   const attributesValueSelected = (e) => {
@@ -174,37 +181,41 @@ const EditProductPageComponent = ({
       //console.log(attrKey.current.value);
       //attrs values
       //console.log(e.target.value);
-      setAttributesTableWrapper(attrKey.current.value, e.target.value);
+      setAttributesTableWrapper(
+        attrKey.current.value,
+        e.target.value,
+        setAttributesTable
+      );
     }
   };
 
-  const setAttributesTableWrapper = (key, val) => {
-    setAttributesTable((attr) => {
-      console.log(attr);
-      if (attr.length !== 0) {
-        var keyExistsInOldTable = false;
-        let modifiedTable = attr.map((item) => {
-          if (item.key === key) {
-            //Upadte the old value with new val
-            keyExistsInOldTable = true;
-            item.value = val;
-            return item;
-          } else {
-            //retrun unmodified value
-            return item;
-          }
-        });
-        if (keyExistsInOldTable) {
-          return [...modifiedTable];
-        } else {
-          return [...modifiedTable, { key: key, value: val }];
-        }
-      } else {
-        //return key val as local state if values are empty
-        return [{ key: key, value: val }];
-      }
-    });
-  };
+  // const setAttributesTableWrapper = (key, val) => {
+  //   setAttributesTable((attr) => {
+  //     console.log(attr);
+  //     if (attr.length !== 0) {
+  //       var keyExistsInOldTable = false;
+  //       let modifiedTable = attr.map((item) => {
+  //         if (item.key === key) {
+  //           //Upadte the old value with new val
+  //           keyExistsInOldTable = true;
+  //           item.value = val;
+  //           return item;
+  //         } else {
+  //           //retrun unmodified value
+  //           return item;
+  //         }
+  //       });
+  //       if (keyExistsInOldTable) {
+  //         return [...modifiedTable];
+  //       } else {
+  //         return [...modifiedTable, { key: key, value: val }];
+  //       }
+  //     } else {
+  //       //return key val as local state if values are empty
+  //       return [{ key: key, value: val }];
+  //     }
+  //   });
+  // };
   const deleteAttribute = (key) => {
     console.log(key);
     //Call back to retrun item key whic was not equle to args function
@@ -249,7 +260,7 @@ const EditProductPageComponent = ({
           saveAttrToCategoryDocument(newAttrKey, newAttrValue, categoryChoosen)
         );
         //console.log("Add new attribute");
-        setAttributesTableWrapper(newAttrKey, newAttrValue);
+        setAttributesTableWrapper(newAttrKey, newAttrValue, setAttributesTable);
         e.target.value = "";
         createNewAttrKey.current.value = "";
         createNewAttrValue.current.value = "";
@@ -324,7 +335,15 @@ const EditProductPageComponent = ({
                 required
                 name="category"
                 aria-label="Default select example"
-                onChange={changeCategory}
+                //onChange={changeCategory}
+                onChange={(e) =>
+                  changeCategory(
+                    e,
+                    categories,
+                    setAttributesFromDb,
+                    setCategoryChoosen
+                  )
+                }
               >
                 <option value="Choose category">Choose category</option>
                 {categories.map((category, idx) => {
@@ -357,7 +376,13 @@ const EditProductPageComponent = ({
                       name="attrKey"
                       aria-label="Default select example"
                       ref={attrKey}
-                      onChange={setValuesForAttrFromDbSelectForm}
+                      onChange={(e) =>
+                        setValuesForAttrFromDbSelectForm(
+                          e,
+                          attributesFromDb,
+                          attrVal
+                        )
+                      }
                     >
                       <option>Choose attribute</option>
                       {attributesFromDb.map((item, idx) => (
@@ -483,18 +508,40 @@ const EditProductPageComponent = ({
                 multiple
                 onChange={(e) => {
                   setIsUploading("Upload files in progress...");
-                  uploadHandler(e.target.files, id)
-                    .then((data) => {
-                      setIsUploading("Uploading Completed.");
-                      setImageUploded(!imageUploded);
-                    })
-                    .catch((er) =>
-                      setIsUploading(
-                        er.response.data.message
-                          ? er.response.data.message
-                          : er.response.data
-                      )
+                  // uploadHandler(e.target.files, id)
+                  //   .then((data) => {
+                  //     setIsUploading("Uploading Completed.");
+                  //     setImageUploded(!imageUploded);
+                  //   })
+                  //   .catch((er) =>
+                  //     setIsUploading(
+                  //       er.response.data.message
+                  //         ? er.response.data.message
+                  //         : er.response.data
+                  //     )
+                  //   );
+                  if (process.env.NODE_ENV !== "production") {
+                    uploadImageApiRequest(e.target.files, id)
+                      .then((data) => {
+                        setIsUploading("Uploading Completed.");
+                        setImageUploded(!imageUploded);
+                      })
+                      .catch((er) =>
+                        setIsUploading(
+                          er.response.data.message
+                            ? er.response.data.message
+                            : er.response.data
+                        )
+                      );
+                  } else {
+                    uploadImagesCloudinaryApiRequest(e.target.files, id);
+                    setIsUploading(
+                      "upload file completed. wait for the result take effect, refresh also if neccassry"
                     );
+                    setTimeout(() => {
+                      setImageUploded(!imageUploded);
+                    }, 5000);
+                  }
                 }}
               />
               {isUploading}
