@@ -503,7 +503,7 @@ const EditProductPageComponent = ({
               </Row>
               <Form.Control
                 className="mt-3 mb-3"
-                required
+                //required
                 type="file"
                 multiple
                 onChange={(e) => {
