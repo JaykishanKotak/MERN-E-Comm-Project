@@ -193,7 +193,7 @@ const writeReview = async (req, res, next) => {
         rating: Number(rating),
         user: {
           _id: req.user._id,
-          name: req.user.name + " " + req.user.lastName,
+          name: req.user.firstName + " " + req.user.lastName,
         },
       },
     ]);
