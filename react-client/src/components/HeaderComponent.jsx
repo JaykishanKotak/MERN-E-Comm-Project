@@ -15,23 +15,57 @@ import { LinkContainer } from "react-router-bootstrap";
 import { Link } from "react-router-dom";
 import { logout } from "../redux/actions/userActions";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getCategories } from "../redux/actions/categoryActions";
-
+import { useNavigate } from "react-router-dom";
 const HeaderComponent = () => {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.userRegisterLogin);
+  const { categories } = useSelector((state) => state.getCategories);
+
   //const { itemCount } = useSelector((state) => state.cart.itemCount);
   //const cart = useSelector((state) => state.cart);
   //console.log("item count", cart.itemCount);
   //const itemCounter = Number(cart.itemCount) || 0;
   const itemCount = useSelector((state) => state.cart.itemCount);
   //console.log("data", userInfo);
-
+  const navigate = useNavigate();
+  //Highlight category in header
+  const [searchCategoryToggle, setSearchCategoryToggle] = useState("All");
+  //Search in header
+  const [searchQuery, setSearchQuery] = useState("");
   //Call category action here
   useEffect(() => {
     dispatch(getCategories());
   }, [dispatch]);
+
+  //For search
+  const submitHandler = (e) => {
+    if (e.keyCode && e.keyCode !== 13) {
+      return;
+    }
+    e.preventDefault();
+    console.log(searchQuery);
+    //Remove space from left and right
+    if (searchQuery.trim()) {
+      if (searchCategoryToggle === "All") {
+        navigate(`/product-list/search/${searchQuery}`);
+      } else {
+        navigate(
+          `/product-list/category/${searchCategoryToggle.replaceAll(
+            "/",
+            ","
+          )}/search/${searchQuery}`
+        );
+      }
+    } else if (searchCategoryToggle !== "All") {
+      navigate(
+        `/product-list/category/${searchCategoryToggle.replaceAll("/", ",")}`
+      );
+    } else {
+      navigate("/product-list");
+    }
+  };
   return (
     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
       <Container>
@@ -42,13 +76,32 @@ const HeaderComponent = () => {
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
             <InputGroup>
-              <DropdownButton id="dropdown-basic-button" title="All">
-                <Dropdown.Item>Electronics</Dropdown.Item>
+              <DropdownButton
+                id="dropdown-basic-button"
+                title={searchCategoryToggle}
+              >
+                <Dropdown.Item onClick={() => setSearchCategoryToggle("All")}>
+                  All
+                </Dropdown.Item>
+                {categories.map((category, id) => (
+                  <Dropdown.Item
+                    key={id}
+                    onClick={() => setSearchCategoryToggle(category.name)}
+                  >
+                    {category.name}
+                  </Dropdown.Item>
+                ))}
+                {/* <Dropdown.Item>Electronics</Dropdown.Item>
                 <Dropdown.Item>Cars</Dropdown.Item>
-                <Dropdown.Item>Books</Dropdown.Item>
+                <Dropdown.Item>Books</Dropdown.Item>*/}
               </DropdownButton>
-              <Form.Control type="text" placeholder="Search in shop ..." />
-              <Button variant="warning">
+              <Form.Control
+                type="text"
+                onKeyUp={submitHandler}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search in shop ..."
+              />
+              <Button onClick={submitHandler} variant="warning">
                 <i className="bi bi-search text-dark"></i>
               </Button>
             </InputGroup>
