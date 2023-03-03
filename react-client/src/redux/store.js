@@ -1,10 +1,11 @@
 import { combineReducers, createStore, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { cartReducer } from "./reducers/cartReducers";
-import { counterReducer } from "./reducers/cartReducers";
+//import { counterReducer } from "./reducers/cartReducers";
 import { getCategoriesReducer } from "./reducers/categoryReducers";
 import thunk from "redux-thunk";
 import { userRegisterLoginReducer } from "./reducers/userReducers";
+import { adminChatReducer } from "./reducers/chatReducers";
 //Create a reducer which is used to changeing the state
 //Default state => { value: 0 }
 //const countReducer = (state = { value: 0 }) => {
@@ -25,6 +26,7 @@ const reducer = combineReducers({
   cart: cartReducer,
   userRegisterLogin: userRegisterLoginReducer,
   getCategories: getCategoriesReducer,
+  adminChat: adminChatReducer,
 });
 
 //Get The cart item from local storage

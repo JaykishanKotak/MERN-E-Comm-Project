@@ -59,4 +59,14 @@ const orderSchema = new mongoose.Schema(
 );
 
 const Order = mongoose.model("Order", orderSchema);
+//For Socket
+//Will exicute when some chnages happens in order collection
+Order.watch().on("change", (data) => {
+  console.log(data);
+  //If insert new order in db
+  if (data.operationType === "insert") {
+    //Emit when new order created
+    io.emit("newOrder", data.fullDocument);
+  }
+});
 module.exports = Order;
