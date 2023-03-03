@@ -1,17 +1,27 @@
+//For Security
+var helmet = require("helmet");
 //For Socket
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const express = require("express");
 const fileUpload = require("express-fileupload");
 const cookieParser = require("cookie-parser");
+//Config env
+require("dotenv").config();
 
 const app = express();
+
+app.use(helmet());
+app.use(express.json());
+app.use(fileUpload());
+app.use(cookieParser());
+
+const apiRoutes = require("./routes/apiRoutes");
 
 //For Socket
 const httpServer = createServer(app);
 //To used io variable in other files
 global.io = new Server(httpServer);
-require("dotenv").config();
 
 //Store admin name for socket
 const admins = [];
@@ -112,11 +122,6 @@ io.on("connection", (socket) => {
     });
   });
 });
-app.use(express.json());
-app.use(fileUpload());
-app.use(cookieParser());
-
-const apiRoutes = require("./routes/apiRoutes");
 
 app.get("/", async (req, res, next) => {
   res.json({ message: "API running..." });

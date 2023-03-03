@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ProductCarouselComponent from "../../components/ProductCarouselComponent";
 import CategoryCardComponent from "../../components/CategoryCardComponent";
 import { Row, Container } from "react-bootstrap";
+import MetaComponent from "../../components/MetaComponent";
 const HomePageComponent = ({ categories, getBestSellers }) => {
   //   const categories = [
   //     "Tablets",
@@ -34,6 +35,8 @@ const HomePageComponent = ({ categories, getBestSellers }) => {
 
   return (
     <>
+      {/*For SEO */}
+      <MetaComponent />
       <ProductCarouselComponent bestSellers={bestSellers} />
       <Container>
         <Row xs={1} md={2} className="g-4 mt-5">

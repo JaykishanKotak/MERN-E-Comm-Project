@@ -9,6 +9,7 @@ import ProductForListComponent from "../../components/ProductForListComponent";
 import PaginationComponent from "../../components/PaginationComponent";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import MetaComponent from "../../components/MetaComponent";
 const ProductListPageComponent = ({ getProducts, categories }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -120,85 +121,89 @@ const ProductListPageComponent = ({ getProducts, categories }) => {
     window.location.href = "/product-list";
   };
   return (
-    <Container fluid>
-      <Row>
-        <Col md={3}>
-          <ListGroup variant="flush">
-            <ListGroup.Item className="mb-3 mt-3">
-              <SortOptionsComponent setSortOption={setSortOption} />
-            </ListGroup.Item>
-            <ListGroup.Item>
-              Filter : <br />
-              <PriceFilterComponent price={price} setPrice={setPrice} />
-            </ListGroup.Item>
-            <ListGroup.Item>
-              <RatingFilterComponent
-                setRatingsFromFilter={setRatingsFromFilter}
-              />
-            </ListGroup.Item>
-            {/* Category filter table only visible on the main product-list page not for path which alredy have category in it's url (in other words only path with not specifc category section)*/}
-            {!location.pathname.match(/\/category/) && (
+    <>
+      {/*For SEO */}
+      <MetaComponent title={product.name} description={product.description} />
+      <Container fluid>
+        <Row>
+          <Col md={3}>
+            <ListGroup variant="flush">
+              <ListGroup.Item className="mb-3 mt-3">
+                <SortOptionsComponent setSortOption={setSortOption} />
+              </ListGroup.Item>
               <ListGroup.Item>
-                <CategoryFilterComponent
-                  setCategoriesFromFilter={setCategoriesFromFilter}
+                Filter : <br />
+                <PriceFilterComponent price={price} setPrice={setPrice} />
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <RatingFilterComponent
+                  setRatingsFromFilter={setRatingsFromFilter}
                 />
               </ListGroup.Item>
-            )}
-
-            <ListGroup.Item>
-              <AttributesFilterComponent
-                attrsFilter={attrsFilter}
-                //attrsFromFilter={attrsFromFilter}
-                setAttrsFromFilter={setAttrsFromFilter}
-              />
-            </ListGroup.Item>
-            <ListGroup.Item>
-              <Button variant="primary" onClick={handleFilters}>
-                Filter
-              </Button>
-              {"  "}
-              {showResetFilterButton && (
-                <Button
-                  variant="danger"
-                  className="mx-2"
-                  onClick={handleResetFilter}
-                >
-                  Reset Filters
-                </Button>
+              {/* Category filter table only visible on the main product-list page not for path which alredy have category in it's url (in other words only path with not specifc category section)*/}
+              {!location.pathname.match(/\/category/) && (
+                <ListGroup.Item>
+                  <CategoryFilterComponent
+                    setCategoriesFromFilter={setCategoriesFromFilter}
+                  />
+                </ListGroup.Item>
               )}
-            </ListGroup.Item>
-          </ListGroup>
-        </Col>
-        <Col md={9}>
-          {loading ? (
-            <h2>Loading Products...</h2>
-          ) : error ? (
-            <h1>Error while loading products. Try again later.</h1>
-          ) : (
-            products.map((product) => (
-              <ProductForListComponent
-                key={product._id}
-                images={product.images}
-                name={product.name}
-                description={product.description}
-                price={product.price}
-                rating={product.rating}
-                reviewsNumber={product.reviewsNumber}
-                productId={product._id}
+
+              <ListGroup.Item>
+                <AttributesFilterComponent
+                  attrsFilter={attrsFilter}
+                  //attrsFromFilter={attrsFromFilter}
+                  setAttrsFromFilter={setAttrsFromFilter}
+                />
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <Button variant="primary" onClick={handleFilters}>
+                  Filter
+                </Button>
+                {"  "}
+                {showResetFilterButton && (
+                  <Button
+                    variant="danger"
+                    className="mx-2"
+                    onClick={handleResetFilter}
+                  >
+                    Reset Filters
+                  </Button>
+                )}
+              </ListGroup.Item>
+            </ListGroup>
+          </Col>
+          <Col md={9}>
+            {loading ? (
+              <h2>Loading Products...</h2>
+            ) : error ? (
+              <h1>Error while loading products. Try again later.</h1>
+            ) : (
+              products.map((product) => (
+                <ProductForListComponent
+                  key={product._id}
+                  images={product.images}
+                  name={product.name}
+                  description={product.description}
+                  price={product.price}
+                  rating={product.rating}
+                  reviewsNumber={product.reviewsNumber}
+                  productId={product._id}
+                />
+              ))
+            )}
+            {paginationLinksNumber > 1 ? (
+              <PaginationComponent
+                categoryName={categoryName}
+                searchQuery={searchQuery}
+                paginationLinksNumber={paginationLinksNumber}
+                pageNum={pageNum}
               />
-            ))
-          )}
-          {paginationLinksNumber > 1 ? (
-            <PaginationComponent
-              categoryName={categoryName}
-              searchQuery={searchQuery}
-              paginationLinksNumber={paginationLinksNumber}
-              pageNum={pageNum}
-            />
-          ) : null}
-        </Col>
-      </Row>
-    </Container>
+            ) : null}
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 };
 
